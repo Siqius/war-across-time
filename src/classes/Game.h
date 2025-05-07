@@ -2,14 +2,11 @@
 #define GAME_H
 
 static class Game {
-
-    private:
-        bool running;
-        void update()
-        void startGame();
-
+	private:
+		Troop[] troops;
     public:
         void initGame();
+		void update();
 };
 
 #endif //GAME_H

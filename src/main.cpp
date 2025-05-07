@@ -1,8 +1,9 @@
-#include "raylib.h"
 #include <stdio.h>
 #include <iostream>
+#include "raylib.h"
+#include "Game.h"
 
 int main(void) {
-    std::cout << "Hello World!" << std::endl;
+
     return 0;
 }

@@ -1,5 +1,4 @@
 #include "Vector2.h"
-#include "raylib.h"
 #ifndef TROOP_H
 #define TROOP_H
 
@@ -7,11 +6,13 @@
 
 class Troop {
     private:
-        int width;
-        int height;
-        int speed;
-        Texture2D texture;
-        Vector2 position;
+        int _speed;
+        Vector2 _pos;
+        Vector2 _target;
+        Transform _transform;
+    public:
+        int speed() const;
+        void speed(int value);
 };
 
 
