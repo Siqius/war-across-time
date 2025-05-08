@@ -1,13 +1,28 @@
+#include "raylib.h"
 #include "Game.h"
-#include "Troop.h"
-#include "Vec2.h"
+#include <vector>
+
+Game::Game() {
+    troops = std::vector<Troop>();
+}
 
 void Game::init() {
+    InitWindow(Game::screenWidth, Game::screenHeight, "War Across Time");
+    SetTargetFPS(30);
 
+    while (!WindowShouldClose()) {
+        gameloop();
+    }
+
+    CloseWindow();
 }
 
 void Game::gameloop() {
-    return;
+
+
+    BeginDrawing();
+    Butt
+    EndDrawing();
 }
 
 void Game::update() {

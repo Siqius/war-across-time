@@ -5,35 +5,40 @@ CXXFLAGS = -std=c++17 -Wall -Wextra
 # Directories
 SRC_DIR = src
 OBJ_DIR = target
+BUILD_DIR = build
 INCLUDE_DIR = /usr/include
 LIB_DIR = /usr/lib
 
-# Source files
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
-OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+# Source files (recursive)
+SRCS = $(shell find $(SRC_DIR) -name '*.cpp')
+# Convert full paths to object files in target
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 # Target output
-TARGET = $(OBJ_DIR)/WarAcrossTime
+TARGET = $(BUILD_DIR)/WarAcrossTime
 
 # Libraries
 LIBS = -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
 
-# Create target directory if it doesn't exist
+# Create target directory
 $(shell mkdir -p $(OBJ_DIR))
+$(shell mkdir -p $(BUILD_DIR))
 
-# Main target
+# Default target
 all: $(TARGET)
 
-# Linking the target binary
+# Link object files into final binary
 $(TARGET): $(OBJS)
 	$(CXX) $(OBJS) -o $(TARGET) $(LIBS)
 
-# Compiling .cpp files to .o files in the target directory
+# Rule to compile .cpp to .o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
-# Clean up generated files
+# Clean
 clean:
 	rm -rf $(OBJ_DIR)
+	rm -rf $(BUILD_DIR)
 
 .PHONY: all clean

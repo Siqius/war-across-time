@@ -1,6 +1,8 @@
 #include "Transf.h"
 
-Transf::Transf(const int width, const int height) : _width(width), _height(height) { }
+// Constructor
+Transf::Transf(const int width, const int height)
+    : _width(width), _height(height) { }
 
 // Getters
 

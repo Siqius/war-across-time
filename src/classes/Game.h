@@ -1,16 +1,20 @@
 #include <vector>
 #include "Troop.h"
+#include "Button.h"
 #ifndef GAME_H
 #define GAME_H
 
 class Game {
-	private:
-		static std::vector<Troop> troops;
-		static bool running;
+	std::vector<Troop> troops;
+	std::vector<Button> buttons;
+	const int screenWidth = 800;
+	const int screenHeight = 800;
+
     public:
-        static void init();
-		static void update();
-		static void gameloop();
+		Game();
+        void init();
+		void update();
+		void gameloop();
 };
 
-#endif //GAME_H
+#endif

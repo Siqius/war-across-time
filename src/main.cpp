@@ -4,6 +4,7 @@
 #include "classes/Game.h"
 
 int main(void) {
-    Game::init();
+    Game* game = new Game();
+    game->init();
     return 0;
 }

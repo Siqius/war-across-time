@@ -21,4 +21,4 @@ Go into the directory: <br>
 Compile the game: <br>
 `make`
 
-After compiling, you can find the executable in \target\WarAcrossTime(.exe)
+After compiling, you can find the executable in \build\WarAcrossTime(.exe)
