@@ -1,7 +1,15 @@
 #include "Game.h"
 #include "Troop.h"
-#include "Vector2.h"
+#include "Vec2.h"
 
-Game::initGame() {
-	Game::
+void Game::init() {
+
+}
+
+void Game::gameloop() {
+    return;
+}
+
+void Game::update() {
+
 }

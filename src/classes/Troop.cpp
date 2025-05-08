@@ -1,10 +1,4 @@
-//
-// Created by root on 5/7/25.
-//
-
 #include "Troop.h"
+#include "raylib.h"
 
-Troop::Troop(x, y, width, height) {
-    this._pos = new Vector2(x, y);
-    this.width = width;
-}
+Troop::Troop(int x, int y, int width, int height, int speed) : Gameobject(x, y, width, height), _speed(speed) { }

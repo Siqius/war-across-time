@@ -1,44 +1,39 @@
+# Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
 
-ifeq ($(OS),Windows_NT)
-    DETECTED_OS := Windows
-    EXE = .exe
-    RAYLIB_INCLUDE = -IC:/raylib/include
-    RAYLIB_LIBS = -LC:/raylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm
-    MKDIR = if not exist $(OBJDIR) mkdir $(OBJDIR)
-    RM = del /Q /F
-    RMDIR = rmdir /S /Q
-else
-    DETECTED_OS := Unix
-    EXE =
-    RAYLIB_INCLUDE = -I/usr/include
-    RAYLIB_LIBS = -L/usr/lib -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
-    MKDIR = mkdir -p $(OBJDIR)
-    RM = rm -f
-    RMDIR = rm -rf
-endif
+# Directories
+SRC_DIR = src
+OBJ_DIR = target
+INCLUDE_DIR = /usr/include
+LIB_DIR = /usr/lib
 
-TARGET = target/WarAcrossTime$(EXE)
-SRCS = src/main.cpp
-OBJDIR = target
-OBJS = $(OBJDIR)/main.o
+# Source files
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-CXXFLAGS += $(RAYLIB_INCLUDE)
-LDFLAGS += $(RAYLIB_LIBS)
+# Target output
+TARGET = $(OBJ_DIR)/WarAcrossTime
 
+# Libraries
+LIBS = -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
+
+# Create target directory if it doesn't exist
+$(shell mkdir -p $(OBJ_DIR))
+
+# Main target
 all: $(TARGET)
 
+# Linking the target binary
 $(TARGET): $(OBJS)
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX) $(OBJS) -o $(TARGET) $(LIBS)
 
-$(OBJDIR)/main.o: src/main.cpp
-	$(MKDIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Compiling .cpp files to .o files in the target directory
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
+# Clean up generated files
 clean:
-	-$(RM) $(OBJS)
-	-$(RM) $(TARGET)
-	-$(RMDIR) $(OBJDIR)
+	rm -rf $(OBJ_DIR)
 
 .PHONY: all clean
