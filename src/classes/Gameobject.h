@@ -1,5 +1,4 @@
 #include <raylib.h>
-
 #include "Vec2.h"
 #include "Transf.h"
 #ifndef GAMEOBJECT_H

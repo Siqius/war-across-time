@@ -5,7 +5,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra
 # Directories
 SRC_DIR = src
 OBJ_DIR = target
-BUILD_DIR = build
+BUILD_DIR = target/build
 INCLUDE_DIR = /usr/include
 LIB_DIR = /usr/lib
 
@@ -39,6 +39,5 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 # Clean
 clean:
 	rm -rf $(OBJ_DIR)
-	rm -rf $(BUILD_DIR)
 
 .PHONY: all clean

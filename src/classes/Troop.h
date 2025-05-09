@@ -10,7 +10,7 @@ class Troop : public Gameobject {
         int _speed;
         Vec2 _target;
     public:
-        Troop(int x, int y, int width, int height, int speed);
+        Troop(int x, int y, int width, int height, int speed, Texture2D texture);
 
         int speed() const;
         void speed(int value);

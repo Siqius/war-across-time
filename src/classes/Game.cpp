@@ -21,7 +21,6 @@ void Game::gameloop() {
 
 
     BeginDrawing();
-    Butt
     EndDrawing();
 }
 
