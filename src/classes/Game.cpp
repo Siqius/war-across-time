@@ -18,7 +18,28 @@ bool Game::game_running = false;
 vector<Troop> Game::troops = vector<Troop>();
 vector<Button> Game::buttons = vector<Button>();
 vector<Gameobject> Game::gameobjects = vector<Gameobject>();
+
 map<string, Texture2D> Game::textures = map<string, Texture2D>();
+
+map<string, map<string, string>> Game::structures = {
+    { "STONE_AGE", {
+        {"price", "300"},
+        {"health", "500"}
+    }},
+    { "MEDEIVAL_AGE", {
+                {"price", "1000"},
+                {"health", "1000"}
+    }},
+    { "MAGIC_AGE", {
+                {"price", "2500"},
+                {"health", "2000"}
+    }},
+    { "MILITARY_AGE", {
+                {"price", "999999999999999999"},
+                {"health", "5000"}
+    }},
+
+};
 
 void Game::init(char* argv[]) {
     InitWindow(Game::SCREEN_WIDTH, Game::SCREEN_HEIGHT, "War Across Time");
