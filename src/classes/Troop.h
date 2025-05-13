@@ -6,19 +6,19 @@
 
 
 class Troop : public Gameobject {
-    private:
-        int _speed;
-        Vec2 _target;
-    public:
-        Troop(int x, int y, int width, int height, int speed, Texture2D texture);
+    int _speed;
+    Vec2 _target;
+public:
+    Troop(int x, int y, int width, int height, Texture2D texture);
 
-        int speed() const;
-        void speed(int value);
+    // Getters
+    int speed() const;
+    Vec2 target() const;
 
-        Vec2 target() const;
-        void target(Vec2 newTarget);
+    // Setters
+    void target(Vec2 newTarget);
 };
 
 
 
-#endif //TROOP_H
+#endif

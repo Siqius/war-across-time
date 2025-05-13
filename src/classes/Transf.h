@@ -4,16 +4,18 @@
 
 
 class Transf {
-    private:
-        int _width;
-        int _height;
-    public:
-        Transf(int width, int height);
-        int height() const;
-        void height(int value);
+    int _width;
+    int _height;
+public:
+    Transf(int width, int height);
 
-        int width() const;
-        void width(int value);
+    // Getters
+    int height() const;
+    int width() const;
+
+    // Setters
+    void height(int value);
+    void width(int value);
 };
 
 

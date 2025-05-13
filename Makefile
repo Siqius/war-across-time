@@ -4,6 +4,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra
 
 # Directories
 SRC_DIR = src
+ASSETS_DIR = assets
 OBJ_DIR = target
 BUILD_DIR = target/build
 INCLUDE_DIR = /usr/include
