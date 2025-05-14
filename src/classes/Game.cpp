@@ -1,7 +1,8 @@
 #include "raylib.h"
 #include "Game.h"
-
+#include <variant>
 #include <algorithm>
+#include <any>
 #include <filesystem>
 #include <vector>
 using namespace std;
@@ -21,24 +22,48 @@ vector<Gameobject> Game::gameobjects = vector<Gameobject>();
 
 map<string, Texture2D> Game::textures = map<string, Texture2D>();
 
-map<string, map<string, string>> Game::structures = {
+
+
+map<string, map<string, std::variant<string, vector<map<string, string>>>>> Game::structures = {
     { "STONE_AGE", {
-        {"price", "300"},
-        {"health", "500"}
+        {"upgrade_price", "300"},
+        {"structure_health", "500"},
+        {"troops", vector<map<string, string>>({
+            {
+                {"price", "10"},
+                {"health", "30"},
+                {"damage", "5"},
+                {"attack_range", "10"},
+                {"texture", "stone_1"}
+            },
+            {
+                {"price", "25"},
+                {"health", "20"},
+                {"damage", "10"},
+                {"attack_range", "150"},
+                {"texture", "stone_2"}
+            },
+            {
+                {"price", "100"},
+                {"health", "100"},
+                {"damage", "10"},
+                {"attack_range", "10"},
+                {"texture", "stone_3"}
+            },
+        })}
     }},
     { "MEDEIVAL_AGE", {
-                {"price", "1000"},
-                {"health", "1000"}
+        {"upgrade_price", "1000"},
+        {"structure_health", "1000"},
     }},
     { "MAGIC_AGE", {
-                {"price", "2500"},
-                {"health", "2000"}
+        {"upgrade_price", "2500"},
+        {"structure_health", "2000"},
     }},
     { "MILITARY_AGE", {
-                {"price", "999999999999999999"},
-                {"health", "5000"}
+        {"upgrade_price", "999999999999999999"},
+        {"structure_health", "5000"},
     }},
-
 };
 
 void Game::init(char* argv[]) {
