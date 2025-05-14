@@ -4,35 +4,42 @@ CXXFLAGS = -std=c++17 -Wall -Wextra
 
 # Directories
 SRC_DIR = src
-ASSETS_DIR = assets
 OBJ_DIR = target
 BUILD_DIR = target/build
-INCLUDE_DIR = /usr/include
-LIB_DIR = /usr/lib
 
-# Source files (recursive)
+# Platform detection
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S), Linux)
+    # Linux settings
+    TARGET = $(BUILD_DIR)/WarAcrossTime
+    LIBS = -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
+    INCLUDE_DIR = /usr/include
+else ifeq ($(UNAME_S), MINGW64_NT)
+    # Windows (MSYS2 MinGW64)
+    TARGET = $(BUILD_DIR)/WarAcrossTime.exe
+    LIBS = -lraylib -lopengl32 -lgdi32 -lwinmm
+    INCLUDE_DIR = /mingw64/include
+else
+    $(error Unsupported platform: $(UNAME_S))
+endif
+
+# Source and object files
 SRCS = $(shell find $(SRC_DIR) -name '*.cpp')
-# Convert full paths to object files in target
 OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
-# Target output
-TARGET = $(BUILD_DIR)/WarAcrossTime
-
-# Libraries
-LIBS = -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
-
-# Create target directory
+# Create build directories
 $(shell mkdir -p $(OBJ_DIR))
 $(shell mkdir -p $(BUILD_DIR))
 
 # Default target
 all: $(TARGET)
 
-# Link object files into final binary
+# Link step
 $(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
 
-# Rule to compile .cpp to .o
+# Compile step
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
