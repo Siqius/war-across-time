@@ -21,7 +21,7 @@ public:
 
     static void init(char* argv[]);
 	static void gameloop();
-	static void start_game();
+	static void start_game(int);
 	static void stop_game();
 	static void reset_gameobjects();
 	static void clean_up();
@@ -32,6 +32,7 @@ public:
 	static void draw_game();
 
 	static void add_troop(const Troop &troop);
+	static void spawn_troop(int troop);
 	static void remove_troop(const Troop &troop);
 	static void add_button(const Button &button);
 	static void remove_button(const Button &button);

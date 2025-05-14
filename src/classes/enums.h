@@ -1,11 +1,8 @@
 #ifndef ENUMS_H
 #define ENUMS_H
+#include <map>
+#include <string>
 
-enum Structures {
-    STONE_AGE = 1,
-    MEDEIVAL_AGE,
-    MAGIC_AGE,
-    MILITARY_AGE
-};
+inline std::map<int, std::string> stages = { {1, "STONE_AGE"} };
 
 #endif

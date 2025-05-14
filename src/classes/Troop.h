@@ -1,3 +1,5 @@
+#include <string>
+
 #include "Vec2.h"
 #include "Gameobject.h"
 #ifndef TROOP_H
@@ -13,17 +15,24 @@ class Troop : public Gameobject {
     int _damage;
     int _attack_range;
     int _target_range = 200;
+    bool _friendly;
 public:
-    Troop(int x, int y, int width, int height, int price, int health, int damage, int attack_range, Texture2D texture);
+    Troop(int x, int y, int width, int height, int price, int health, int damage, int attack_range, Texture2D texture, bool friendly);
 
     // Getters
     int speed() const;
     Vec2 target() const;
+    bool friendly() const;
 
     // Setters
     void target(Vec2 newTarget);
+
+    static const int FRIENDLY_SPAWN_POS_X = 100;
+    static const int FRIENDLY_SPAWN_POS_Y = 400;
+    static const int ENEMY_SPAWN_POS_X = 700;
+    static const int ENEMY_SPAWN_POS_Y = 400;
+
+    static const int TROOP_SIZE = 64;
 };
-
-
 
 #endif

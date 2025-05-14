@@ -1,4 +1,6 @@
 #include <raylib.h>
+#include <string>
+
 #include "Vec2.h"
 #include "Transf.h"
 #ifndef GAMEOBJECT_H
@@ -13,7 +15,7 @@ class Gameobject {
     int _id;
 
 public:
-    Gameobject(int x, int y, int width, int height, Texture2D image);
+    Gameobject(int x, int y, int width, int height, Texture2D texture);
 
     // Getters
     Transf transform() const;

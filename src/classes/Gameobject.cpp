@@ -1,8 +1,8 @@
 #include "Gameobject.h"
 #include "Game.h"
 
-Gameobject::Gameobject(int x, int y, int width, int height, Texture2D image)
-    : _vector2(x, y), _transform(width, height), _texture(image), _id(Game::gameobjects.size()) {
+Gameobject::Gameobject(int x, int y, int width, int height, Texture2D texture)
+    : _vector2(x, y), _transform(width, height), _texture(texture), _id(Game::gameobjects.size()) {
     Game::gameobjects.push_back(*this);
 }
 

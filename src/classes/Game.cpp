@@ -2,6 +2,7 @@
 #include "Game.h"
 #include <variant>
 #include <algorithm>
+#include <iostream>
 #include <any>
 #include <filesystem>
 #include <vector>
@@ -72,7 +73,7 @@ void Game::init(char* argv[]) {
 
     load_textures(argv);
 
-    Button(400, 400, 200, 200, textures["main_menu_start_button"], Sound(), start_game);
+    Button(400, 400, 200, 200, textures["main_menu_start_button"], Sound(), bind(start_game, 1));
 
     while (!WindowShouldClose()) {
         gameloop();
@@ -97,11 +98,10 @@ void Game::clean_up() {
 void Game::gameloop() {
     // Button interaction
     for (auto& button : buttons) {
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (button.is_hovering(GetMouseX(), GetMouseY())) {
-                button.callback();
-            }
-        }
+        if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) continue;
+        if (!button.is_hovering(GetMouseX(), GetMouseY())) continue;
+
+        button.callback();
     }
 
     // Drawing
@@ -124,7 +124,7 @@ void Game::gameloop() {
     EndDrawing();
 }
 
-void Game::start_game() {
+void Game::start_game(int) {
     game_running = true;
     reset_gameobjects();
 }
@@ -149,6 +149,10 @@ void Game::draw_game() {
 }
 
 // Troop functions
+
+void Game::spawn_troop(int troop) {
+
+}
 
 void Game::add_troop(const Troop &troop) {
     troops.push_back(troop);

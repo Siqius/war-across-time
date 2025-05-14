@@ -1,11 +1,12 @@
 #include "Button.h"
 
 #include <iostream>
+#include <utility>
 
 #include "Game.h"
 
-Button::Button(int x, int y, int width, int height, Texture2D texture, Sound sound, void (*callback)())
-    : Gameobject(x, y, width, height, texture), callback(callback), _sound(sound) {
+Button::Button(int x, int y, int width, int height, Texture2D texture, Sound sound, std::function<void()> callback)
+    : Gameobject(x, y, width, height, texture), callback(std::move(callback)), _sound(sound) {
     Game::add_button(*this);
 }
 
