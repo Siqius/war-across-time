@@ -11,12 +11,10 @@ BUILD_DIR = target/build
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S), Linux)
-    # Linux settings
     TARGET = $(BUILD_DIR)/WarAcrossTime
     LIBS = -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
     INCLUDE_DIR = /usr/include
-else ifeq ($(UNAME_S), MINGW64_NT)
-    # Windows (MSYS2 MinGW64)
+else ifneq (,$(findstring MINGW64_NT,$(UNAME_S)))
     TARGET = $(BUILD_DIR)/WarAcrossTime.exe
     LIBS = -lraylib -lopengl32 -lgdi32 -lwinmm
     INCLUDE_DIR = /mingw64/include
@@ -39,7 +37,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
 
-# Compile step
+# Compile rule
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
