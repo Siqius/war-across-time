@@ -1,15 +1,13 @@
 #include "Player.h"
-int coins();
-void add_coins(int value);
-void remove_coins(int value);
 
-int stage();
-void next_stage();
+Player::Player() {
+    _coins = 0;
+    _structure = Structure();
+}
 
-int health();
-void set_health(int value);
-void remove_health(int value);
-
+Structure Player::structure() const {
+    return _structure;
+}
 
 // Coins
 int Player::coins() const {
@@ -20,23 +18,4 @@ void Player::add_coins(int value) {
 }
 void Player::remove_coins(int value) {
     _coins -= value;
-}
-
-// Stage
-int Player::stage() const {
-    return _stage;
-}
-void Player::next_stage() {
-    _stage++;
-}
-
-// Health
-int Player::health() const {
-    return _health;
-}
-void Player::set_health(int value) {
-    _health = value;
-}
-void Player::remove_health(int value) {
-    _health -= value;
 }

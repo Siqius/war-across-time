@@ -1,10 +1,7 @@
 #ifndef STONE1_H
 #define STONE1_H
-#include <string>
 #include "../Troop.h"
 #include "../Game.h"
-using namespace std;
-
 
 class Stone1 : public Troop {
 public:

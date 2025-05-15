@@ -3,9 +3,9 @@
 #include <variant>
 #include <algorithm>
 #include <iostream>
-#include <any>
 #include <filesystem>
 #include <vector>
+#include "Player.h"
 using namespace std;
 
 string getAssetPath(const string& relativePath, const char* argv0) {
@@ -21,51 +21,9 @@ vector<Troop> Game::troops = vector<Troop>();
 vector<Button> Game::buttons = vector<Button>();
 vector<Gameobject> Game::gameobjects = vector<Gameobject>();
 
+Player player = Player();
+
 map<string, Texture2D> Game::textures = map<string, Texture2D>();
-
-
-
-map<string, map<string, std::variant<string, vector<map<string, string>>>>> Game::structures = {
-    { "STONE_AGE", {
-        {"upgrade_price", "300"},
-        {"structure_health", "500"},
-        {"troops", vector<map<string, string>>({
-            {
-                {"price", "10"},
-                {"health", "30"},
-                {"damage", "5"},
-                {"attack_range", "10"},
-                {"texture", "stone_1"}
-            },
-            {
-                {"price", "25"},
-                {"health", "20"},
-                {"damage", "10"},
-                {"attack_range", "150"},
-                {"texture", "stone_2"}
-            },
-            {
-                {"price", "100"},
-                {"health", "100"},
-                {"damage", "10"},
-                {"attack_range", "10"},
-                {"texture", "stone_3"}
-            },
-        })}
-    }},
-    { "MEDEIVAL_AGE", {
-        {"upgrade_price", "1000"},
-        {"structure_health", "1000"},
-    }},
-    { "MAGIC_AGE", {
-        {"upgrade_price", "2500"},
-        {"structure_health", "2000"},
-    }},
-    { "MILITARY_AGE", {
-        {"upgrade_price", "999999999999999999"},
-        {"structure_health", "5000"},
-    }},
-};
 
 void Game::init(char* argv[]) {
     InitWindow(Game::SCREEN_WIDTH, Game::SCREEN_HEIGHT, "War Across Time");
@@ -151,7 +109,18 @@ void Game::draw_game() {
 // Troop functions
 
 void Game::spawn_troop(int troop) {
+        int stage = player.structure().stage();
 
+    if (stage == 1) {
+        if (troop == 1) Stone1(true);
+        else if (troop == 2) Stone2(true);
+        else if (troop == 3) Stone3(true);
+    }
+    else if (stage == 2) {
+        if (troop == 1) Medieval1(true);
+        else if (troop == 2) Medieval2(true);
+        else if (troop == 3) Medieval3(true);
+    }
 }
 
 void Game::add_troop(const Troop &troop) {

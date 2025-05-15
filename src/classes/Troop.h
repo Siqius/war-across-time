@@ -1,4 +1,10 @@
 #include <string>
+#include "troops/Stone1.h"
+#include "troops/Stone2.h"
+#include "troops/Stone3.h"
+#include "troops/Medieval1.h"
+#include "troops/Medieval2.h"
+#include "troops/Medieval3.h"
 
 #include "Vec2.h"
 #include "Gameobject.h"
