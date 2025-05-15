@@ -11,7 +11,7 @@ public:
     inline static int MAX_HEALTH = 120;
     inline static int DAMAGE = 20;
     inline static int ATTACK_RANGE = 10;
-    inline static Texture2D TEXTURE = Game::textures["medieval_1"];
+    inline static Texture2D TEXTURE;
 };
 
 #endif

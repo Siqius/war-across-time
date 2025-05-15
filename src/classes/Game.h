@@ -17,7 +17,6 @@ public:
 	static const int SCREEN_HEIGHT = 800;
 
 	static std::map<std::string, Texture2D> textures;
-	static std::map<std::string, std::map<std::string, std::variant<std::string, std::vector<std::map<std::string, std::string>>>>> structures;
 
     static void init(char* argv[]);
 	static void gameloop();

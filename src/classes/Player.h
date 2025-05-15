@@ -7,7 +7,7 @@ class Player {
     int _coins;
     Structure _structure;
 public:
-    Player();
+    Player(bool friendly);
 
     Structure structure() const;
 

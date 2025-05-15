@@ -21,7 +21,8 @@ vector<Troop> Game::troops = vector<Troop>();
 vector<Button> Game::buttons = vector<Button>();
 vector<Gameobject> Game::gameobjects = vector<Gameobject>();
 
-Player player = Player();
+Player player = Player(true);
+Player enemy = Player(false);
 
 map<string, Texture2D> Game::textures = map<string, Texture2D>();
 
@@ -31,7 +32,7 @@ void Game::init(char* argv[]) {
 
     load_textures(argv);
 
-    Button(400, 400, 200, 200, textures["main_menu_start_button"], Sound(), bind(start_game, 1));
+    add_button(Button(400, 400, 200, 200, textures.at("main_menu_start_button"), Sound(), bind(start_game, 1)));
 
     while (!WindowShouldClose()) {
         gameloop();
@@ -43,41 +44,62 @@ void Game::init(char* argv[]) {
 }
 
 void Game::load_textures(char* argv[]) {
-    textures["main_menu_background"] = LoadTexture(getAssetPath("main_menu.png", argv[0]).c_str());
-    textures["main_menu_start_button"] = LoadTexture(getAssetPath("main_menu_start_button.png", argv[0]).c_str());
+    vector<string> keys = {
+        "main_menu.png",
+        "main_menu_start_button.png",
+        "structure_1.png", "structure_2.png", "structure_3.png", "structure_4.png",
+        "stone_1.png", "stone_2.png", "stone_3.png",
+        "medieval_1.png", "medieval_2.png", "medieval_3.png"
+    };
+
+    for (const string& key : keys) {
+        string path = getAssetPath(key, argv[0]);
+        textures.insert_or_assign(key, LoadTexture(path.c_str()));
+    }
+
+    if (textures.count("structure_1")) player.structure().texture(textures.at("structure_1"));
+
+    if (textures.count("stone_1")) Stone1::TEXTURE = textures.at("stone_1");
+    if (textures.count("stone_2")) Stone2::TEXTURE = textures.at("stone_2");
+    if (textures.count("stone_3")) Stone3::TEXTURE = textures.at("stone_3");
+    if (textures.count("medieval_1")) Medieval1::TEXTURE = textures.at("medieval_1");
+    if (textures.count("medieval_2")) Medieval2::TEXTURE = textures.at("medieval_2");
+    if (textures.count("medieval_3")) Medieval3::TEXTURE = textures.at("medieval_3");
 }
 
 void Game::clean_up() {
     for (auto const& [key, val] : textures) {
         UnloadTexture(val);
     }
+    textures.clear();
 }
 
 void Game::gameloop() {
-    // Button interaction
-    for (auto& button : buttons) {
-        if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) continue;
-        if (!button.is_hovering(GetMouseX(), GetMouseY())) continue;
-
-        button.callback();
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        int mx = GetMouseX();
+        int my = GetMouseY();
+        for (auto& button : buttons) {
+            if (button.is_hovering(mx, my)) {
+                button.callback();
+            }
+        }
     }
 
-    // Drawing
-
     BeginDrawing();
-
     ClearBackground(RAYWHITE);
 
     if (game_running) {
         draw_game();
-    }
-    else {
+    } else {
         draw_main_menu();
     }
 
     for (auto const& gameobject : gameobjects) {
         gameobject.render();
     }
+
+    player.structure().render();
+    enemy.structure().render();
 
     EndDrawing();
 }
@@ -99,17 +121,13 @@ void Game::reset_gameobjects() {
 }
 
 void Game::draw_main_menu() {
-    DrawTexture(textures["main_menu_background"], 0, 0, WHITE);
+    DrawTexture(textures.at("main_menu_background"), 0, 0, WHITE);
 }
 
-void Game::draw_game() {
-
-}
-
-// Troop functions
+void Game::draw_game() {}
 
 void Game::spawn_troop(int troop) {
-        int stage = player.structure().stage();
+    int stage = player.structure().stage();
 
     if (stage == 1) {
         if (troop == 1) Stone1(true);
@@ -128,7 +146,7 @@ void Game::add_troop(const Troop &troop) {
 }
 
 void Game::remove_troop(const Troop &troop) {
-    for (int i = 0; i < static_cast<int> (troops.size()); i++) {
+    for (int i = 0; i < static_cast<int>(troops.size()); i++) {
         if (troops[i].id() == troop.id()) {
             troops.erase(troops.begin() + i);
             break;
@@ -136,14 +154,12 @@ void Game::remove_troop(const Troop &troop) {
     }
 }
 
-// Button functions
-
 void Game::add_button(const Button &button) {
     buttons.push_back(button);
 }
 
 void Game::remove_button(const Button &button) {
-    for (int i = 0; i < static_cast<int> (buttons.size()); i++) {
+    for (int i = 0; i < static_cast<int>(buttons.size()); i++) {
         if (buttons[i].id() == button.id()) {
             buttons.erase(buttons.begin() + i);
             break;

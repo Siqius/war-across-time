@@ -1,9 +1,6 @@
 #include "Player.h"
 
-Player::Player() {
-    _coins = 0;
-    _structure = Structure();
-}
+Player::Player(bool friendly): _coins(0), _structure(Structure(friendly)) { }
 
 Structure Player::structure() const {
     return _structure;

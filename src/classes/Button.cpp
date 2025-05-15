@@ -7,7 +7,7 @@
 
 Button::Button(int x, int y, int width, int height, Texture2D texture, Sound sound, std::function<void()> callback)
     : Gameobject(x, y, width, height, texture), callback(std::move(callback)), _sound(sound) {
-    Game::add_button(*this);
+    //Game::add_button(*this);
 }
 
 bool Button::is_hovering(int mouseX, int mouseY) {
