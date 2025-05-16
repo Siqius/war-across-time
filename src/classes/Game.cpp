@@ -45,26 +45,27 @@ void Game::init(char* argv[]) {
 
 void Game::load_textures(char* argv[]) {
     vector<string> keys = {
-        "main_menu.png",
-        "main_menu_start_button.png",
-        "structure_1.png", "structure_2.png", "structure_3.png", "structure_4.png",
-        "stone_1.png", "stone_2.png", "stone_3.png",
-        "medieval_1.png", "medieval_2.png", "medieval_3.png"
+        "main_menu",
+        "main_menu_start_button",
+        "structure_1", "structure_2", "structure_3", "structure_4",
+        "stone_1", "stone_2", "stone_3",
+        "medieval_1", "medieval_2", "medieval_3"
     };
 
     for (const string& key : keys) {
-        string path = getAssetPath(key, argv[0]);
+        string path = getAssetPath(key + ".png", argv[0]);
         textures.insert_or_assign(key, LoadTexture(path.c_str()));
     }
 
-    if (textures.count("structure_1")) player.structure().texture(textures.at("structure_1"));
+    player.structure().texture(textures.at("structure_1"));
+    enemy.structure().texture(textures.at("structure_1"));
 
-    if (textures.count("stone_1")) Stone1::TEXTURE = textures.at("stone_1");
-    if (textures.count("stone_2")) Stone2::TEXTURE = textures.at("stone_2");
-    if (textures.count("stone_3")) Stone3::TEXTURE = textures.at("stone_3");
-    if (textures.count("medieval_1")) Medieval1::TEXTURE = textures.at("medieval_1");
-    if (textures.count("medieval_2")) Medieval2::TEXTURE = textures.at("medieval_2");
-    if (textures.count("medieval_3")) Medieval3::TEXTURE = textures.at("medieval_3");
+    Stone1::TEXTURE = textures.at("stone_1");
+    Stone2::TEXTURE = textures.at("stone_2");
+    Stone3::TEXTURE = textures.at("stone_3");
+    Medieval1::TEXTURE = textures.at("medieval_1");
+    Medieval2::TEXTURE = textures.at("medieval_2");
+    Medieval3::TEXTURE = textures.at("medieval_3");
 }
 
 void Game::clean_up() {
@@ -83,6 +84,10 @@ void Game::gameloop() {
                 button.callback();
             }
         }
+    }
+
+    for (Troop troop : troops) {
+        troop.scan();
     }
 
     BeginDrawing();

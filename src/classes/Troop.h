@@ -15,7 +15,7 @@
 
 class Troop : public Gameobject {
     int _speed = 1;
-    Vec2 _target;
+    Troop* _target;
     int _price;
     int _health;
     int _damage;
@@ -27,11 +27,15 @@ public:
 
     // Getters
     int speed() const;
-    Vec2 target() const;
+    Troop target() const;
     bool friendly() const;
 
     // Setters
-    void target(Vec2 newTarget);
+    void target(Troop newTarget);
+
+    void scan();
+
+    bool take_damage(int damage);
 
     static const int FRIENDLY_SPAWN_POS_X = 100;
     static const int FRIENDLY_SPAWN_POS_Y = 400;
