@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 
-#include "Game.h"
 #include "Gameobject.h"
 
 inline std::vector<std::map<std::string, int>> structures = {
@@ -31,7 +30,7 @@ class Structure {
     int _upgrade_cost = structures[_stage - 1]["price"];
     int _health = structures[_stage - 1]["health"];
     bool _friendly;
-    Texture2D _texture;
+    const Texture2D* _texture;
 public:
     Structure(bool friendly);
 
@@ -41,9 +40,9 @@ public:
     int upgrade_cost() const;
 
     int health() const;
-    void remove_health(int value);
+    bool remove_health(int value);
 
-    void texture(Texture2D texture);
+    void texture(const Texture2D* texture);
 
     void render() const;
 };

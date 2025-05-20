@@ -5,9 +5,9 @@
 
 #include "Game.h"
 
-Button::Button(int x, int y, int width, int height, Texture2D texture, Sound sound, std::function<void()> callback)
-    : Gameobject(x, y, width, height, texture), callback(std::move(callback)), _sound(sound) {
-    //Game::add_button(*this);
+Button::Button(int x, int y, int width, int height, const Texture2D* texture, const Sound* sound, std::function<void()> callback)
+    : Gameobject(x, y, width, height, texture), _sound(sound), callback(std::move(callback)) {
+    Game::buttons.push_back(this);
 }
 
 bool Button::is_hovering(int mouseX, int mouseY) {

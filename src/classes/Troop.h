@@ -1,10 +1,6 @@
+#pragma once
 #include <string>
-#include "troops/Stone1.h"
-#include "troops/Stone2.h"
-#include "troops/Stone3.h"
-#include "troops/Medieval1.h"
-#include "troops/Medieval2.h"
-#include "troops/Medieval3.h"
+#include <ctime>
 
 #include "Vec2.h"
 #include "Gameobject.h"
@@ -22,16 +18,22 @@ class Troop : public Gameobject {
     int _attack_range;
     int _target_range = 200;
     bool _friendly;
+    bool can_move = true;
+    clock_t time_since_attack = clock();
 public:
-    Troop(int x, int y, int width, int height, int price, int health, int damage, int attack_range, Texture2D texture, bool friendly);
+    Troop(int x, int y, int width, int height, int price, int health, int damage, int attack_range, const Texture2D* texture, bool friendly);
 
     // Getters
     int speed() const;
-    Troop target() const;
+    Troop* target() const;
     bool friendly() const;
 
     // Setters
-    void target(Troop newTarget);
+    void target(Troop* newTarget);
+
+    void attempt_attack();
+
+    void update();
 
     void scan();
 

@@ -2,14 +2,13 @@
 #define PLAYER_H
 #include "Structure.h"
 
-
 class Player {
     int _coins;
     Structure _structure;
 public:
     Player(bool friendly);
 
-    Structure structure() const;
+    Structure& structure();
 
     int coins() const;
 

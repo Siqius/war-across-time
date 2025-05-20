@@ -1,16 +1,18 @@
 #include "Gameobject.h"
 #include "Game.h"
+#include <iostream>
 
-Gameobject::Gameobject(int x, int y, int width, int height, Texture2D texture)
-    : _vector2(x, y), _transform(width, height), _texture(texture), _id(Game::gameobjects.size()) {
-    Game::gameobjects.push_back(*this);
+Gameobject::Gameobject(int x, int y, int width, int height, const Texture2D* texture)
+    : _vector2(x, y), _transform(width, height), _texture(texture), _id(Game::next_id) {
+    Game::next_id++;
+    Game::gameobjects.push_back(this);
 }
 
-Transf Gameobject::transform() const {
+Transf& Gameobject::transform() {
     return _transform;
 }
 
-Vec2 Gameobject::vector2() const {
+Vec2& Gameobject::vector2() {
     return _vector2;
 }
 
@@ -20,6 +22,6 @@ int Gameobject::id() const {
 
 void Gameobject::render() const {
     Rectangle source = (Rectangle){ 0, 0, static_cast<float>(_transform.width()), static_cast<float>(_transform.height()) };
-    Rectangle dest = (Rectangle){ Game::SCREEN_WIDTH/2, Game::SCREEN_HEIGHT/2, source.width, source.height };
-    DrawTexturePro(_texture, source, dest, (Vector2){dest.width/2, dest.height/2}, _vector2.rotation() * 360, WHITE);
+    Rectangle dest = (Rectangle){ static_cast<float>(_vector2.x()), static_cast<float>(_vector2.y()), source.width, source.height };
+    DrawTexturePro(*_texture, source, dest, (Vector2){dest.width/2, dest.height/2}, _vector2.rotation() * 360, WHITE);
 }

@@ -1,5 +1,7 @@
 #include "Stone1.h"
 
+#include <iostream>
+
 Stone1::Stone1(bool friendly)
 : Troop(
     (friendly) ? FRIENDLY_SPAWN_POS_X : ENEMY_SPAWN_POS_X,

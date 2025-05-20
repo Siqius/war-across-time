@@ -1,14 +1,16 @@
 #include "Vec2.h"
 
+#include <iostream>
+
 Vec2::Vec2(int x, int y) : _x(x), _y(y), _rotation(0.0f) { }
 
 // Setters
 void Vec2::x(int value) {
-    _x = value;
+    _x += value;
 }
 
 void Vec2::y(int value) {
-    _y = value;
+    _y += value;
 }
 
 void Vec2::rotation(float value) {

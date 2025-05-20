@@ -11,15 +11,15 @@
 class Gameobject {
     Vec2 _vector2;
     Transf _transform;
-    Texture2D _texture;
+    const Texture2D* _texture;
     int _id;
 
 public:
-    Gameobject(int x, int y, int width, int height, Texture2D texture);
+    Gameobject(int x, int y, int width, int height, const Texture2D* texture);
 
     // Getters
-    Transf transform() const;
-    Vec2 vector2() const;
+    Transf& transform();
+    Vec2& vector2();
     int id() const;
 
     void render() const;
