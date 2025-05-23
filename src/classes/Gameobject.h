@@ -13,9 +13,15 @@ class Gameobject {
     Transf _transform;
     const Texture2D* _texture;
     int _id;
+    bool _dead = false;
 
 public:
     Gameobject(int x, int y, int width, int height, const Texture2D* texture);
+
+    virtual ~Gameobject() {}
+
+    void mark_dead() { _dead = true; }
+    bool is_dead() const { return _dead; }
 
     // Getters
     Transf& transform();

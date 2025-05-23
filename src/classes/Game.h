@@ -10,6 +10,7 @@
 class Game {
 public:
 	static std::vector<Troop*> troops;
+	static std::vector<int> troops_to_remove;
 	static std::vector<Button*> buttons;
 	static std::vector<Gameobject*> gameobjects;
 	static bool game_running;
@@ -39,9 +40,11 @@ public:
 	static void draw_game();
 	static void draw_text();
 
-	static void spawn_troop(int troop);
-	static void remove_troop(const Troop &troop);
-	static void remove_button(const Button &button);
+	static void spawn_troop(int troop, bool friendly);
+	static void cleanup_dead_objects();
+	static void remove_troop(const int id);
+	static void remove_gameobject(const int id);
+	static void remove_button(const int id);
 };
 
 #endif

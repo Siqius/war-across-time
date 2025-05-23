@@ -26,6 +26,7 @@ string getAssetPath(const string& relativePath, const char* argv0) {
 
 bool Game::game_running = false;
 vector<Troop*> Game::troops = vector<Troop*>();
+vector<int> Game::troops_to_remove = vector<int>();
 vector<Button*> Game::buttons = vector<Button*>();
 vector<Gameobject*> Game::gameobjects = vector<Gameobject*>();
 
@@ -43,7 +44,7 @@ void Game::init(char* argv[]) {
     load_textures(argv);
     load_sounds(argv);
 
-    init_menu_gameobjects();
+    stop_game();
 
     while (!WindowShouldClose()) {
         gameloop();
@@ -67,7 +68,7 @@ void Game::load_sounds(char* argv[]) {
 
 void Game::load_textures(char* argv[]) {
     vector<string> keys = {
-        "main_menu", "game_background",
+        "main_menu_background", "game_background",
         "main_menu_start_button",
         "structure_1", "structure_2", "structure_3", "structure_4",
         "stone_1", "stone_2", "stone_3",
@@ -129,6 +130,8 @@ void Game::gameloop() {
         troop->attempt_attack();
     }
 
+    cleanup_dead_objects();
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
@@ -136,6 +139,7 @@ void Game::gameloop() {
         draw_game();
         player.structure().render();
         enemy.structure().render();
+        enemy.spawn_random_troops();
     } else {
         draw_main_menu();
     }
@@ -153,6 +157,11 @@ void Game::start_game(int) {
     game_running = true;
     reset_gameobjects();
     init_game_gameobjects();
+    player = Player(true);
+    enemy = Player(false);
+
+    player.structure().texture(&textures.at("structure_1"));
+    enemy.structure().texture(&textures.at("structure_1"));
 }
 
 void Game::stop_game() {
@@ -162,9 +171,9 @@ void Game::stop_game() {
 }
 
 void Game::init_game_gameobjects() {
-    new Button(250, 700, 100, 100, &textures.at("stone_1"), &sounds.at("fart"), bind(spawn_troop, 1));
-    new Button(400, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 2));
-    new Button(550, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 3));
+    new Button(250, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 1, true));
+    new Button(400, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 2, true));
+    new Button(550, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 3, true));
 }
 
 void Game::init_menu_gameobjects() {
@@ -178,7 +187,7 @@ void Game::reset_gameobjects() {
 }
 
 void Game::draw_main_menu() {
-    DrawTexture(textures.at("main_menu"), 0, 0, WHITE);
+    DrawTexture(textures.at("main_menu_background"), 0, 0, WHITE);
 }
 
 void Game::draw_game() {
@@ -196,58 +205,87 @@ void Game::draw_text() {
     }
 }
 
-void Game::spawn_troop(int troop) {
-    int stage = player.structure().stage();
-
-    if (stage == 1) {
-        if (troop == 1) {
-            if (player.coins() < Stone1::PRICE) return;
-            player.remove_coins(Stone1::PRICE);
-            new Stone1(true);
-        }
-        else if (troop == 2) {
-            if (player.coins() < Stone2::PRICE) return;
-            player.remove_coins(Stone2::PRICE);
-            new Stone2(true);
-        }
-        else if (troop == 3) {
-            if (player.coins() < Stone3::PRICE) return;
-            player.remove_coins(Stone3::PRICE);
-            new Stone3(true);
+void Game::cleanup_dead_objects() {
+    // Remove from troops
+    for (auto it = troops.begin(); it != troops.end(); ) {
+        if ((*it)->is_dead()) {
+            delete *it;
+            it = troops.erase(it);
+        } else {
+            ++it;
         }
     }
-    else if (stage == 2) {
-        if (troop == 1) {
-            if (player.coins() < Medieval1::PRICE) return;
-            player.remove_coins(Medieval1::PRICE);
-            new Medieval1(true);
-        }
-        else if (troop == 2) {
-            if (player.coins() < Medieval2::PRICE) return;
-            player.remove_coins(Medieval2::PRICE);
-            new Medieval2(true);
-        }
-        else if (troop == 3) {
-            if (player.coins() < Medieval3::PRICE) return;
-            player.remove_coins(Medieval3::PRICE);
-            new Medieval3(true);
+
+    for (auto it = gameobjects.begin(); it != gameobjects.end(); ) {
+        if ((*it)->is_dead()) {
+            it = gameobjects.erase(it);
+        } else {
+            ++it;
         }
     }
 }
 
-void Game::remove_troop(const Troop &troop) {
-    for (int i = 0; i < static_cast<int>(troops.size()); i++) {
-        if (troops[i]->id() == troop.id()) {
-            delete troops[i];
-            troops.erase(troops.begin() + i);
+void Game::spawn_troop(int troop, bool friendly) {
+    int stage = player.structure().stage();
+    Player* ref = friendly ? &player : &enemy;
+
+    if (stage == 1) {
+        if (troop == 1) {
+            if (ref->coins() < Stone1::PRICE) return;
+            ref->remove_coins(Stone1::PRICE);
+            new Stone1(friendly);
+        }
+        else if (troop == 2) {
+            if (ref->coins() < Stone2::PRICE) return;
+            ref->remove_coins(Stone2::PRICE);
+            new Stone2(friendly);
+        }
+        else if (troop == 3) {
+            if (ref->coins() < Stone3::PRICE) return;
+            ref->remove_coins(Stone3::PRICE);
+            new Stone3(friendly);
+        }
+    }
+    else if (stage == 2) {
+        if (troop == 1) {
+            if (ref->coins() < Medieval1::PRICE) return;
+            ref->remove_coins(Medieval1::PRICE);
+            new Medieval1(friendly);
+        }
+        else if (troop == 2) {
+            if (ref->coins() < Medieval2::PRICE) return;
+            ref->remove_coins(Medieval2::PRICE);
+            new Medieval2(friendly);
+        }
+        else if (troop == 3) {
+            if (ref->coins() < Medieval3::PRICE) return;
+            ref->remove_coins(Medieval3::PRICE);
+            new Medieval3(friendly);
+        }
+    }
+}
+
+void Game::remove_troop(const int id) {
+    for (Troop* troop : troops) {
+        if (troop->id() == id) {
+            troop->mark_dead();
             break;
         }
     }
 }
 
-void Game::remove_button(const Button& button) {
+void Game::remove_gameobject(const int id) {
+    for (Gameobject* obj : gameobjects) {
+        if (obj->id() == id) {
+            obj->mark_dead();
+            break;
+        }
+    }
+}
+
+void Game::remove_button(const int id) {
     for (int i = 0; i < static_cast<int>(buttons.size()); i++) {
-        if (buttons[i]->id() == button.id()) {
+        if (buttons[i]->id() == id) {
             delete buttons[i];
             buttons.erase(buttons.begin() + i);
             break;

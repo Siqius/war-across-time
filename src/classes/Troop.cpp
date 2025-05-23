@@ -8,6 +8,7 @@
 
 Troop::Troop(int x, int y, int width, int height, int price, int health, int damage, int  attack_range, const Texture2D* texture, bool friendly)
     : Gameobject(x, y, width, height, texture), _target(nullptr), _price(price), _health(health), _damage(damage), _attack_range(attack_range), _friendly(friendly) {
+    _max_health = health;
     Game::troops.push_back(this);
 }
 
@@ -18,6 +19,10 @@ Troop* Troop::target() const { return _target; }
 int Troop::speed() const { return _speed; }
 
 bool Troop::friendly() const { return _friendly; }
+
+int Troop::health() const { return _health; }
+
+int Troop::max_health() const { return _max_health; }
 
 // Setters
 
@@ -35,13 +40,12 @@ void Troop::update() {
 void Troop::target(Troop *newTarget) { _target = newTarget; }
 
 void Troop::attempt_attack() {
+    int mult = _friendly ? 1 : -1;
     if (target() == nullptr) {
-        int structure_pos_x = _friendly ? 768.0f-64.0f : 32.0f+64.0f;
-        std::cout << Game::enemy.structure().health() << std::endl;
-        std::cout << (clock() - time_since_attack) / 10000 << std::endl;
-        if (abs((vector2().x() + transform().width()/2) - structure_pos_x) > _attack_range) return;
+        const int structure_pos_x = _friendly ? 768 : 32;
+        if (abs((this->vector2().x() + this->transform().width()/2 * mult) - structure_pos_x - 128/2*mult) > _attack_range) return;
         can_move = false;
-        if ((clock() - time_since_attack) / 10000 < 5) return;
+        if ((clock() - time_since_attack) / 100000 < 5) return;
 
         if (friendly()) {
             if (Game::enemy.structure().remove_health(_damage)) Game::stop_game();
@@ -52,12 +56,16 @@ void Troop::attempt_attack() {
         time_since_attack = clock();
         return;
     }
-    if (abs((target()->vector2().x() - target()->transform().width()/2) - (vector2().x() + transform().width())) > _attack_range) return;
-    can_move = false;
-    if ((clock() - time_since_attack) / 100 < 0.5) return;
 
+    if (abs( (this->vector2().x() + this->transform().width() / 2 * mult)- (target()->vector2().x() - (target()->transform().width() / 2 * mult * -1))) > _attack_range) return;
+    can_move = false;
+    if ((clock() - time_since_attack) / 100000 < 5) return;
+
+    int kill_price = target()->_price;
     if (target()->take_damage(_damage)) { //if the target is dead
-        Game::remove_troop(*target());
+        if (friendly()) Game::player.add_coins(ceil(kill_price * 1.4));
+        else Game::enemy.add_coins(ceil(kill_price * 1.7));
+        Game::remove_troop(target()->id());
         target(nullptr);
     }
 
@@ -65,6 +73,8 @@ void Troop::attempt_attack() {
 }
 
 void Troop::scan() {
+    if ((clock() - time_since_attack) / 100000 < 2) return;
+    time_since_scan = clock();
     float min_d = 1000.0;
     Troop* closest_target = nullptr;
 
@@ -87,9 +97,12 @@ void Troop::scan() {
 bool Troop::take_damage(int damage) {
     _health -= damage;
     if (_health <= 0) {
-        Game::remove_troop(*this);
-        delete this;
+        mark_dead();
         return true;
     }
     return false;
+}
+
+void Troop::render_health_bar() const {
+
 }

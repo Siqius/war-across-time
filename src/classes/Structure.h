@@ -30,7 +30,7 @@ class Structure {
     int _upgrade_cost = structures[_stage - 1]["price"];
     int _health = structures[_stage - 1]["health"];
     bool _friendly;
-    const Texture2D* _texture;
+    Texture2D* _texture;
 public:
     Structure(bool friendly);
 
@@ -42,7 +42,7 @@ public:
     int health() const;
     bool remove_health(int value);
 
-    void texture(const Texture2D* texture);
+    void texture(Texture2D* texture);
 
     void render() const;
 };

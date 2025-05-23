@@ -1,5 +1,6 @@
 #include "Gameobject.h"
 #include "Game.h"
+#include "Troop.h"
 #include <iostream>
 
 Gameobject::Gameobject(int x, int y, int width, int height, const Texture2D* texture)
@@ -24,4 +25,15 @@ void Gameobject::render() const {
     Rectangle source = (Rectangle){ 0, 0, static_cast<float>(_transform.width()), static_cast<float>(_transform.height()) };
     Rectangle dest = (Rectangle){ static_cast<float>(_vector2.x()), static_cast<float>(_vector2.y()), source.width, source.height };
     DrawTexturePro(*_texture, source, dest, (Vector2){dest.width/2, dest.height/2}, _vector2.rotation() * 360, WHITE);
+
+    // Render healthbar for troops
+    if (const Troop* troop = dynamic_cast<const Troop*>(this)) {
+        DrawRectangle(_vector2.x(), _vector2.y() - _transform.height() - 50, _transform.width(), 50, RED);
+        std::cout << _transform.width() << std::endl;
+        std::cout << troop->max_health() << std::endl;
+        std::cout << troop->health() << std::endl;
+        std::cout << _transform.width() - _transform.width() / (troop ->max_health() - troop->max_health() / troop->health()) << std::endl;
+        int health_length = troop->health() <= 0 ? 0 : _transform.width() - _transform.width() / (troop->max_health() / troop->health());
+        DrawRectangle(_vector2.x(), _vector2.y() - _transform.height() - 50, health_length, 50, GREEN);
+    }
 }
