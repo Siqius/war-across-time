@@ -28,12 +28,9 @@ void Gameobject::render() const {
 
     // Render healthbar for troops
     if (const Troop* troop = dynamic_cast<const Troop*>(this)) {
-        DrawRectangle(_vector2.x(), _vector2.y() - _transform.height() - 50, _transform.width(), 50, RED);
-        std::cout << _transform.width() << std::endl;
-        std::cout << troop->max_health() << std::endl;
-        std::cout << troop->health() << std::endl;
-        std::cout << _transform.width() - _transform.width() / (troop ->max_health() - troop->max_health() / troop->health()) << std::endl;
-        int health_length = troop->health() <= 0 ? 0 : _transform.width() - _transform.width() / (troop->max_health() / troop->health());
-        DrawRectangle(_vector2.x(), _vector2.y() - _transform.height() - 50, health_length, 50, GREEN);
+        DrawRectangle(_vector2.x() - _transform.width() / 2 - 2, _vector2.y() - _transform.height() - 23, _transform.width() + 2, 29, BLACK);
+        DrawRectangle(_vector2.x() - _transform.width() / 2, _vector2.y() - _transform.height() - 25, _transform.width(), 25, RED);
+        if (troop->health() <= 0) return;
+        DrawRectangle(_vector2.x() - _transform.width() / 2, _vector2.y() - _transform.height() - 25, _transform.width() / (troop->max_health() / troop->health()), 25, GREEN);
     }
 }

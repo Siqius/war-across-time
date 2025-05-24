@@ -2,7 +2,7 @@
 #include "Game.h"
 #include <iostream>
 
-Structure::Structure(bool friendly): _friendly(friendly) { }
+Structure::Structure(int playern): _playern(playern) { }
 
 // Stage
 int Structure::stage() const {
@@ -35,7 +35,7 @@ void Structure::texture(Texture2D* texture) {
 }
 
 void Structure::render() const {
-    Rectangle source = (Rectangle){ 0, 0, _friendly ? 128.0f : -128.0f, 128.0f };
-    Rectangle dest = (Rectangle){ _friendly ? 32.0f : 768.0f - 128.f, 400, source.width, source.height };
+    Rectangle source = (Rectangle){ 0, 0, _playern == 1 ? 128.0f : -128.0f, 128.0f };
+    Rectangle dest = (Rectangle){ _playern == 1 ? 32.0f : 768.0f - 128.f, 400, source.width, source.height };
     DrawTexturePro(*_texture, source, dest, (Vector2){dest.width/2, dest.height/2}, 0, WHITE);
 }

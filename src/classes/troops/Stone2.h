@@ -4,12 +4,12 @@
 
 class Stone2 : public Troop {
 public:
-    explicit Stone2(bool friendly);
+    explicit Stone2(int playern);
 
     inline static int PRICE = 25;
-    inline static int MAX_HEALTH = 20;
-    inline static int DAMAGE = 10;
-    inline static int ATTACK_RANGE = 150;
+    inline static int MAX_HEALTH = 10;
+    inline static int DAMAGE = 5;
+    inline static int ATTACK_RANGE = 200;
     inline static const Texture2D* TEXTURE;
 };
 

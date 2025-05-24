@@ -4,7 +4,7 @@
 
 class Medieval3 : public Troop {
 public:
-    explicit Medieval3(bool friendly);
+    explicit Medieval3(int playern);
 
     inline static int PRICE = 400;
     inline static int MAX_HEALTH = 400;

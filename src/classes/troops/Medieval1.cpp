@@ -1,9 +1,9 @@
 #include "Medieval1.h"
 
-Medieval1::Medieval1(bool friendly)
+Medieval1::Medieval1(int playern)
 : Troop(
-    (friendly) ? FRIENDLY_SPAWN_POS_X : ENEMY_SPAWN_POS_X,
-    (friendly) ? FRIENDLY_SPAWN_POS_Y : ENEMY_SPAWN_POS_Y,
+    (playern == 1) ? FRIENDLY_SPAWN_POS_X : ENEMY_SPAWN_POS_X,
+    (playern == 1) ? FRIENDLY_SPAWN_POS_Y : ENEMY_SPAWN_POS_Y,
     TROOP_SIZE,
     TROOP_SIZE,
     PRICE,
@@ -11,5 +11,5 @@ Medieval1::Medieval1(bool friendly)
     DAMAGE,
     ATTACK_RANGE,
     TEXTURE,
-    friendly
+    playern
     ) { }

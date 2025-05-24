@@ -1,8 +1,5 @@
 #pragma once
-#include <string>
-#include <ctime>
-
-#include "Vec2.h"
+#include "Time.h"
 #include "Gameobject.h"
 #ifndef TROOP_H
 #define TROOP_H
@@ -18,18 +15,18 @@ class Troop : public Gameobject {
     int _damage;
     int _attack_range;
     int _target_range = 200;
-    bool _friendly;
+    int _playern;
     bool can_move = true;
-    clock_t time_since_attack = clock();
-    clock_t time_since_scan = clock();
+    long time_since_attack = Time::get_time();
+    long time_since_scan = Time::get_time();
 
 public:
-    Troop(int x, int y, int width, int height, int price, int health, int damage, int attack_range, const Texture2D* texture, bool friendly);
+    Troop(int x, int y, int width, int height, int price, int health, int damage, int attack_range, const Texture2D* texture, int playern);
 
     // Getters
     int speed() const;
     Troop* target() const;
-    bool friendly() const;
+    int player() const;
     int health() const;
     int max_health() const;
 
@@ -43,8 +40,6 @@ public:
     void scan();
 
     bool take_damage(int damage);
-
-    void render_health_bar() const;
 
     static const int FRIENDLY_SPAWN_POS_X = 100;
     static const int FRIENDLY_SPAWN_POS_Y = 400;

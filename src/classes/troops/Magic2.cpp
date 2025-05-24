@@ -1,8 +1,6 @@
-#include "Stone1.h"
+#include "Magic2.h"
 
-#include <iostream>
-
-Stone1::Stone1(int playern)
+Magic2::Magic2(int playern)
 : Troop(
     (playern == 1) ? FRIENDLY_SPAWN_POS_X : ENEMY_SPAWN_POS_X,
     (playern == 1) ? FRIENDLY_SPAWN_POS_Y : ENEMY_SPAWN_POS_Y,

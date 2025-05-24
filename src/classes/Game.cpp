@@ -1,11 +1,8 @@
 #include "raylib.h"
 #include "Game.h"
-#include <variant>
 #include <algorithm>
-#include <iostream>
 #include <filesystem>
 #include <vector>
-#include <bits/posix2_lim.h>
 
 #include "Player.h"
 #include "troops/Stone1.h"
@@ -14,6 +11,12 @@
 #include "troops/Medieval1.h"
 #include "troops/Medieval2.h"
 #include "troops/Medieval3.h"
+#include "troops/Magic1.h"
+#include "troops/Magic2.h"
+#include "troops/Magic3.h"
+#include "troops/Military1.h"
+#include "troops/Military2.h"
+#include "troops/Military3.h"
 using namespace std;
 
 string getAssetPath(const string& relativePath, const char* argv0) {
@@ -31,7 +34,7 @@ vector<Button*> Game::buttons = vector<Button*>();
 vector<Gameobject*> Game::gameobjects = vector<Gameobject*>();
 
 Player Game::player = Player(true);
-Player Game::enemy = Player(false);
+Player Game::player2 = Player(false);
 
 map<string, Texture2D> Game::textures = map<string, Texture2D>();
 map<string, Sound> Game::sounds = map<string, Sound>();
@@ -72,16 +75,23 @@ void Game::load_textures(char* argv[]) {
         "main_menu_start_button",
         "structure_1", "structure_2", "structure_3", "structure_4",
         "stone_1", "stone_2", "stone_3",
-        "medieval_1", "medieval_2", "medieval_3"
+        "medieval_1", "medieval_2", "medieval_3",
+        "magic_1", "magic_2", "magic_3",
+        "military_1", "military_2", "military_3"
     };
 
     for (const string& key : keys) {
         string path = getAssetPath(key + ".png", argv[0]);
-        textures.insert_or_assign(key, LoadTexture(path.c_str()));
+        Texture2D texture = LoadTexture(path.c_str());
+        if (key[4] == 'c') {
+            texture.width = 128;
+            texture.height = 128;
+        }
+        textures.insert_or_assign(key, texture);
     }
 
     player.structure().texture(&textures.at("structure_1"));
-    enemy.structure().texture(&textures.at("structure_1"));
+    player2.structure().texture(&textures.at("structure_1"));
 
     Stone1::TEXTURE = &textures.at("stone_1");
     Stone2::TEXTURE = &textures.at("stone_2");
@@ -89,6 +99,12 @@ void Game::load_textures(char* argv[]) {
     Medieval1::TEXTURE = &textures.at("medieval_1");
     Medieval2::TEXTURE = &textures.at("medieval_2");
     Medieval3::TEXTURE = &textures.at("medieval_3");
+    Magic1::TEXTURE = &textures.at("magic_1");
+    Magic2::TEXTURE = &textures.at("magic_2");
+    Magic3::TEXTURE = &textures.at("magic_3");
+    Military1::TEXTURE = &textures.at("military_1");
+    Military2::TEXTURE = &textures.at("military_2");
+    Military3::TEXTURE = &textures.at("military_3");
 }
 
 void Game::clean_up() {
@@ -138,8 +154,7 @@ void Game::gameloop() {
     if (game_running) {
         draw_game();
         player.structure().render();
-        enemy.structure().render();
-        enemy.spawn_random_troops();
+        player2.structure().render();
     } else {
         draw_main_menu();
     }
@@ -158,10 +173,10 @@ void Game::start_game(int) {
     reset_gameobjects();
     init_game_gameobjects();
     player = Player(true);
-    enemy = Player(false);
+    player2 = Player(false);
 
     player.structure().texture(&textures.at("structure_1"));
-    enemy.structure().texture(&textures.at("structure_1"));
+    player2.structure().texture(&textures.at("structure_1"));
 }
 
 void Game::stop_game() {
@@ -171,9 +186,68 @@ void Game::stop_game() {
 }
 
 void Game::init_game_gameobjects() {
-    new Button(250, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 1, true));
-    new Button(400, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 2, true));
-    new Button(550, 700, 100, 100, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 3, true));
+    new Button(40, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 1, 1));
+    new Button(140, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 2, 1));
+    new Button(240, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 3, 1));
+    new Button(340, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(next_stage, 1));
+
+    new Button(460, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 1, 2));
+    new Button(560, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 2, 2));
+    new Button(660, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(spawn_troop, 3, 2));
+    new Button(760, 700, 75, 75, &textures.at("main_menu_start_button"), &sounds.at("fart"), bind(next_stage, 2));
+}
+
+void Game::draw_text() {
+    if (game_running) {
+        DrawText(("Player 1 \nCoins: " + std::to_string(player.coins()) + "\nHP: " + std::to_string(player.structure().health())).c_str(), 50, 500, 25, WHITE);
+        DrawText(std::to_string(player.structure().upgrade_cost()).c_str(), 310, 700, 25, player.coins() < player.structure().upgrade_cost() ? RED : GREEN );
+        DrawRectangle(395, 500, 10, 300, BLACK);
+        DrawText(("Player 2 \nCoins: " + std::to_string(player2.coins()) + "\nHP: " + std::to_string(player2.structure().health())).c_str(), 450, 500, 25, WHITE);
+        DrawText(std::to_string(player2.structure().upgrade_cost()).c_str(), 725, 700, 25, player2.coins() < player2.structure().upgrade_cost() ? RED : GREEN );
+        int player1_stage = player.structure().stage();
+        int player2_stage = player2.structure().stage();
+        if (player1_stage == 1) {
+            DrawText(std::to_string(Stone1::PRICE).c_str(), 5, 700, 25, player.coins() < Stone1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Stone2::PRICE).c_str(), 105, 700, 25, player.coins() < Stone2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Stone3::PRICE).c_str(), 205, 700, 25, player.coins() < Stone3::PRICE ? RED : GREEN );
+        }
+        else if (player1_stage == 2) {
+            DrawText(std::to_string(Medieval1::PRICE).c_str(), 5, 700, 25, player.coins() < Medieval1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Medieval2::PRICE).c_str(), 105, 700, 25, player.coins() < Medieval2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Medieval3::PRICE).c_str(), 205, 700, 25, player.coins() < Medieval3::PRICE ? RED : GREEN );
+        }
+        else if (player1_stage == 3) {
+            DrawText(std::to_string(Magic1::PRICE).c_str(), 5, 700, 25, player.coins() < Magic1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Magic2::PRICE).c_str(), 105, 700, 25, player.coins() < Magic2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Magic3::PRICE).c_str(), 205, 700, 25, player.coins() < Magic3::PRICE ? RED : GREEN );
+        }
+        else if (player1_stage == 4) {
+            DrawText(std::to_string(Military1::PRICE).c_str(), 5, 700, 25, player.coins() < Military1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Military2::PRICE).c_str(), 105, 700, 25, player.coins() < Military2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Military3::PRICE).c_str(), 205, 700, 25, player.coins() < Military3::PRICE ? RED : GREEN );
+        }
+
+        if (player2_stage == 1) {
+            DrawText(std::to_string(Stone1::PRICE).c_str(), 425, 700, 25, player2.coins() < Stone1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Stone2::PRICE).c_str(), 525, 700, 25, player2.coins() < Stone2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Stone3::PRICE).c_str(), 625, 700, 25, player2.coins() < Stone3::PRICE ? RED : GREEN );
+        }
+        else if (player2_stage == 2) {
+            DrawText(std::to_string(Medieval1::PRICE).c_str(), 425, 700, 25, player2.coins() < Medieval1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Medieval2::PRICE).c_str(), 525, 700, 25, player2.coins() < Medieval2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Medieval3::PRICE).c_str(), 625, 700, 25, player2.coins() < Medieval3::PRICE ? RED : GREEN );
+        }
+        else if (player2_stage == 3) {
+            DrawText(std::to_string(Magic1::PRICE).c_str(), 425, 700, 25, player2.coins() < Magic1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Magic2::PRICE).c_str(), 525, 700, 25, player2.coins() < Magic2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Magic3::PRICE).c_str(), 625, 700, 25, player2.coins() < Magic3::PRICE ? RED : GREEN );
+        }
+        else if (player2_stage == 4) {
+            DrawText(std::to_string(Military1::PRICE).c_str(), 425, 700, 25, player2.coins() < Military1::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Military2::PRICE).c_str(), 525, 700, 25, player2.coins() < Military2::PRICE ? RED : GREEN );
+            DrawText(std::to_string(Military3::PRICE).c_str(), 625, 700, 25, player2.coins() < Military3::PRICE ? RED : GREEN );
+        }
+    }
 }
 
 void Game::init_menu_gameobjects() {
@@ -194,19 +268,7 @@ void Game::draw_game() {
     DrawTexture(textures.at("game_background"), 0, 0, WHITE);
 }
 
-void Game::draw_text() {
-    if (game_running) {
-        int stage = player.structure().stage();
-        if (stage == 1) {
-            DrawText(std::to_string(Stone1::PRICE).c_str(), 200, 700, 50, player.coins() < Stone1::PRICE ? RED : GREEN );
-            DrawText(std::to_string(Stone2::PRICE).c_str(), 350, 700, 50, player.coins() < Stone2::PRICE ? RED : GREEN );
-            DrawText(std::to_string(Stone3::PRICE).c_str(), 500, 700, 50, player.coins() < Stone3::PRICE ? RED : GREEN );
-        }
-    }
-}
-
 void Game::cleanup_dead_objects() {
-    // Remove from troops
     for (auto it = troops.begin(); it != troops.end(); ) {
         if ((*it)->is_dead()) {
             delete *it;
@@ -225,42 +287,83 @@ void Game::cleanup_dead_objects() {
     }
 }
 
-void Game::spawn_troop(int troop, bool friendly) {
-    int stage = player.structure().stage();
-    Player* ref = friendly ? &player : &enemy;
+void Game::next_stage(int playern) {
+    Player* ref = playern == 1 ? &player : &player2;
+    if (ref->coins() < ref->structure().upgrade_cost()) return;
+    ref->remove_coins(ref->structure().upgrade_cost());
+    ref->structure().next_stage();
+}
 
+void Game::spawn_troop(int troop, int playern) {
+    int stage = player.structure().stage();
+    Player* ref = playern == 1 ? &player : &player2;
     if (stage == 1) {
         if (troop == 1) {
             if (ref->coins() < Stone1::PRICE) return;
             ref->remove_coins(Stone1::PRICE);
-            new Stone1(friendly);
+            new Stone1(playern);
         }
         else if (troop == 2) {
             if (ref->coins() < Stone2::PRICE) return;
             ref->remove_coins(Stone2::PRICE);
-            new Stone2(friendly);
+            new Stone2(playern);
         }
         else if (troop == 3) {
             if (ref->coins() < Stone3::PRICE) return;
             ref->remove_coins(Stone3::PRICE);
-            new Stone3(friendly);
+            new Stone3(playern);
         }
     }
     else if (stage == 2) {
         if (troop == 1) {
             if (ref->coins() < Medieval1::PRICE) return;
             ref->remove_coins(Medieval1::PRICE);
-            new Medieval1(friendly);
+            new Medieval1(playern);
         }
         else if (troop == 2) {
             if (ref->coins() < Medieval2::PRICE) return;
             ref->remove_coins(Medieval2::PRICE);
-            new Medieval2(friendly);
+            new Medieval2(playern);
         }
         else if (troop == 3) {
             if (ref->coins() < Medieval3::PRICE) return;
             ref->remove_coins(Medieval3::PRICE);
-            new Medieval3(friendly);
+            new Medieval3(playern);
+        }
+    }
+
+    else if (stage == 3) {
+        if (troop == 1) {
+            if (ref->coins() < Magic1::PRICE) return;
+            ref->remove_coins(Magic1::PRICE);
+            new Magic1(playern);
+        }
+        else if (troop == 2) {
+            if (ref->coins() < Magic2::PRICE) return;
+            ref->remove_coins(Magic2::PRICE);
+            new Magic2(playern);
+        }
+        else if (troop == 3) {
+            if (ref->coins() < Magic3::PRICE) return;
+            ref->remove_coins(Magic3::PRICE);
+            new Magic3(playern);
+        }
+    }
+    else if (stage == 4) {
+        if (troop == 1) {
+            if (ref->coins() < Military1::PRICE) return;
+            ref->remove_coins(Military1::PRICE);
+            new Military1(playern);
+        }
+        else if (troop == 2) {
+            if (ref->coins() < Military2::PRICE) return;
+            ref->remove_coins(Military2::PRICE);
+            new Military2(playern);
+        }
+        else if (troop == 3) {
+            if (ref->coins() < Military3::PRICE) return;
+            ref->remove_coins(Military3::PRICE);
+            new Military3(playern);
         }
     }
 }

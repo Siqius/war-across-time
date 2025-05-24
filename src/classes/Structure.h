@@ -29,10 +29,10 @@ class Structure {
     int _stage = 1;
     int _upgrade_cost = structures[_stage - 1]["price"];
     int _health = structures[_stage - 1]["health"];
-    bool _friendly;
+    int _playern;
     Texture2D* _texture;
 public:
-    Structure(bool friendly);
+    Structure(int playern);
 
     int stage() const;
     void next_stage();

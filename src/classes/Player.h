@@ -1,15 +1,17 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Structure.h"
-#include <ctime>
+#include "Time.h"
 
 class Player {
     int _coins;
     Structure _structure;
-    clock_t last_spawned = clock();
+    int _playern;
+
+    long last_spawned = Time::get_time();
 
 public:
-    Player(bool friendly);
+    Player(int playern);
 
     Structure& structure();
 
@@ -17,8 +19,6 @@ public:
 
     void add_coins(int value);
     void remove_coins(int value);
-
-    void spawn_random_troops();
 };
 
 

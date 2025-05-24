@@ -22,7 +22,7 @@ public:
 	static int next_id;
 
 	static Player player;
-	static Player enemy;
+	static Player player2;
 
     static void init(char* argv[]);
 	static void gameloop();
@@ -40,7 +40,8 @@ public:
 	static void draw_game();
 	static void draw_text();
 
-	static void spawn_troop(int troop, bool friendly);
+	static void next_stage(int playern);
+	static void spawn_troop(int troop, int playern);
 	static void cleanup_dead_objects();
 	static void remove_troop(const int id);
 	static void remove_gameobject(const int id);
