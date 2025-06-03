@@ -25,5 +25,5 @@ Compile the game: <br>
 Or in one command:
 `git clone https://github.com/Siqius/war-across-time.git && cd war-across-time && make`
 
-After compiling, you can find the executable in `\build\WarAcrossTime`, <br>
+After compiling, you can find the executable in `\target\build\WarAcrossTime`, <br>
 or `C:\msys64\home\{user}\war-across-time\target\build\WarAcrossTime.exe` if you're on windows
