@@ -5,7 +5,7 @@ An age of war inspired game made in C++ using [Raylib](https://www.raylib.com/)
 * Windows
   * [Msys2](https://github.com/msys2/msys2-installer/releases/download/2025-02-21/msys2-x86_64-20250221.exe) is needed to compile the game
     * Open MSYS2 MINGW64
-    * Run `pacman -S git mingw-w64-x86_64-raylib mingw-w64-x86_64-gcc` to install dependencies
+    * Run `pacman -S git mingw-w64-x86_64-raylib mingw-w64-x86_64-gcc make` to install dependencies
 * Linux/MacOS
   * Install `raylib`, `g++` and `make` using a package manager (apt, brew, etc.)
 
@@ -27,3 +27,5 @@ Or in one command:
 
 After compiling, you can find the executable in `\target\build\WarAcrossTime`, <br>
 or `C:\msys64\home\{user}\war-across-time\target\build\WarAcrossTime.exe` if you're on windows
+# IMPORTANT
+Must run executable through MSYS2 MINGW64 terminal, `./target/build/WarAcrossTime.exe`
